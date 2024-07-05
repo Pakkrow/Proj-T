@@ -1,0 +1,18 @@
+FROM node:20
+
+WORKDIR /node/
+
+COPY ./back/app.js /node/
+COPY ./back/package.json /node/
+
+RUN npm i
+
+CMD ["node", "app.js"]
+
+#To start it all you need two commands :
+
+#First :  docker build -t marvback:0.1 -f Dockerfile.back .
+#This one is used to create the docker image
+
+#Second : docker run -p "3000:3000" marvfront:0.1
+#This second one is to create a container from the existing image
