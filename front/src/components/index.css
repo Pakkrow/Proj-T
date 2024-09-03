@@ -1,0 +1,37 @@
+li {
+    list-style: none;
+}
+
+.pokeList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(20%, 1fr));
+    justify-content: space-evenly;
+    align-items: flex-start;
+    padding-left: 0;
+
+}
+
+.pokeTeamList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(15%, 1fr));
+    justify-content: space-evenly;
+    align-items: flex-start;
+    padding-left: 0;
+
+}
+
+.pokeCard {
+    align-items: center;
+    margin: auto;
+    margin-top: 1vh;
+}
+
+.mons {
+    width: fit-content;
+}
+
+.types {
+    max-width: 100px;
+    align-self: center;
+    margin: 5px 0;
+}

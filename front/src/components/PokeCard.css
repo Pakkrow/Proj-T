@@ -1,0 +1,44 @@
+.shinyLogoON {
+    max-width: 50px;
+    border-radius: 10px;
+    border-color: aqua;
+}
+
+.shinyLogoOFF {
+    max-width: 50px;
+    filter: grayscale(100%);
+    border-radius: 10px;
+    border-color: aqua;
+}
+
+.pokeCard {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background: lightblue;
+    width: fit-content;
+    border: solid 1px #6871f5; 
+    border-radius: 10px;
+}
+
+.bsList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.bs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
+}
+
+p {
+    margin: 3px;
+}

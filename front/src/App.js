@@ -1,25 +1,30 @@
 import logo from './logo.svg';
 import './App.css';
+import { useEffect, useState, React } from 'react';
+import Pokedex from './components/Pokedex.js';
+import PokeCard from './components/PokeCard.js';
 
 function App() {
+  const [input, setInput] = useState("");
+  const [pokeList, setPokeList] = useState([]);
+
+  useEffect(() => {
+
+  }, [pokeList]);
+
+  const displayMon = () => {
+    setPokeList([...pokeList, <PokeCard key={input}  name={input}/>]);
+    return <PokeCard key={input} name={input}/>
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <Pokedex></Pokedex>
+      <input value={input} onInput={e => setInput(e.target.value)}/>
+      <button onClick={() => displayMon()}>GO</button>
+      <ul className='pokeList'>{pokeList}</ul> */}
     </div>
   );
-}
+} 
 
 export default App;

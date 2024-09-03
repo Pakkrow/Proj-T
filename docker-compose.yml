@@ -1,13 +1,21 @@
-version: '4'
 services:
   marvfront:
     image: marvfront:0.1
+    build:
+      context: .
+      dockerfile: ./Dockerfile.front
     environment:
       PORT: 3000
+      WATCHPACK_POLLING: "true"
     ports:
       - 3000:3000
+    volumes:
+      - "./front:/react/"
   marvback:
     image: marvback:0.1
+    build:
+      context: .
+      dockerfile: ./Dockerfile.back
     environment:
       PORT: 5000
     ports:

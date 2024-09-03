@@ -2,10 +2,6 @@ FROM node:20
 
 WORKDIR /react/
 
-COPY ./front/public/ /react/public/
-COPY ./front/src/ /react/src/
-COPY ./front/package.json /react/
-
 RUN npm i
 
 CMD ["npm", "start"]
