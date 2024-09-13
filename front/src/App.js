@@ -3,6 +3,7 @@ import './App.css';
 import { useEffect, useState, React } from 'react';
 import Pokedex from './components/Pokedex.js';
 import PokeCard from './components/PokeCard.js';
+import LoginPage from './components/LoginPage.js'
 
 function App() {
   const [input, setInput] = useState("");
@@ -19,8 +20,9 @@ function App() {
 
   return (
     <div className="App">
-      {/* <Pokedex></Pokedex>
-      <input value={input} onInput={e => setInput(e.target.value)}/>
+      <LoginPage/>
+      {/* <Pokedex></Pokedex> */}
+      {/* <input value={input} onInput={e => setInput(e.target.value)}/>
       <button onClick={() => displayMon()}>GO</button>
       <ul className='pokeList'>{pokeList}</ul> */}
     </div>

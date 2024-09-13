@@ -35,3 +35,42 @@ li {
     align-self: center;
     margin: 5px 0;
 }
+
+.loginContainer {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 3vh;
+    background: #fffcfc;
+    width: 35vw;
+    height: 50vh;
+    padding: 5px;
+    box-shadow: 13px 17px 15px -3px rgba(0,0,0,0.1);
+}
+
+input {
+    all: unset;
+    border-bottom: 2px solid lightgray;
+    text-align: left;
+    width: 65%;
+    padding: 5px 10px 5px 5px;
+}
+
+input:focus {
+    border: 2px solid gray;
+    border-radius: 5px
+}
+
+.loginButton {
+    all: unset;
+    color: white;
+    background: linear-gradient(blue, magenta);
+    width: 60%;
+    padding: 15px;
+}
+
+.flexCol {
+    display: flex;
+    flex-direction: row;
+}

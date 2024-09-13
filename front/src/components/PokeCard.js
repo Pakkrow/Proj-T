@@ -45,7 +45,6 @@ const PokeCard = ({ name, lvl = 0 }) => {
                 console.log("Data == ", JSON.stringify(data))
                 console.log("Base stats set without level adjustment.");
             }
-
             setPokeTypes(data.types);
         } catch (error) {
             console.log("Il y a une erreur sur l'obtention de l'url du poke : ", error);
