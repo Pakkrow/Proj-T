@@ -2,11 +2,17 @@ FROM node:20
 
 WORKDIR /react/
 
+COPY ./front/package.json /react/
+
 RUN npm i
+
+COPY ./front/public /react/public
+COPY ./front/src /react/src
+COPY ./front/ /react/
 
 CMD ["npm", "start"]
 
-#To start it all you need two commands :
+#To start it, all you are (is ?) need two commands :
 
 #First :  docker build -t marvfront:0.1 -f Dockerfile.front .
 #This one is used to create the docker image

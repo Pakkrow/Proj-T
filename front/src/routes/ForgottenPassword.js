@@ -12,7 +12,7 @@ const ForgottenPassword = () => {
             <h1>Login</h1>
             <input name="loginInput" placeholder="Login"/>
             <button className="loginButton">Login</button>
- 
+
         </div>
         </div>
     );

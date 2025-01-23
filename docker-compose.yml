@@ -10,7 +10,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - "./front:/react/"
+      - "./front:/react"
   marvback:
     image: marvback:0.1
     build:

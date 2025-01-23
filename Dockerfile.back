@@ -7,6 +7,10 @@ COPY ./back/package.json /node/
 
 RUN npm i
 
+COPY ./back/src/ /node/src/
+COPY ./back/jwtUtils.js /node/
+COPY ./back/jsconfig.json /node/
+
 CMD ["node", "app.js"]
 
 #To start it all you need two commands :
@@ -14,5 +18,5 @@ CMD ["node", "app.js"]
 #First :  docker build -t marvback:0.1 -f Dockerfile.back .
 #This one is used to create the docker image
 
-#Second : docker run -p "3000:3000" marvfront:0.1
+#Second : docker run -p "5000:5000" marvfront:0.1
 #This second one is to create a container from the existing image

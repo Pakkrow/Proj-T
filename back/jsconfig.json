@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@dto/*": ["src/dto/*"],
+            "@controllers/*": ["src/controllers/*"],
+            "@mapper/*": ["src/mapper/*"],
+            "@routes/*": ["src/routes/*"]
+        }
+    }
+}
