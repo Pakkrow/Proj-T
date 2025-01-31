@@ -8,7 +8,6 @@ li {
     justify-content: space-evenly;
     align-items: flex-start;
     padding-left: 0;
-
 }
 
 .pokeTeamList {
@@ -17,7 +16,6 @@ li {
     justify-content: space-evenly;
     align-items: flex-start;
     padding-left: 0;
-
 }
 
 .pokeCard {
@@ -36,13 +34,23 @@ li {
     margin: 5px 0;
 }
 
+.loginPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(blue, magenta);
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+}
+
 .loginContainer {
     display: flex;
     justify-content: space-evenly;
     flex-direction: column;
     align-items: center;
     border-radius: 3vh;
-    background: #fffcfc;
+    background: #fbfbfb;
     width: 35vw;
     height: 50vh;
     padding: 5px;
@@ -57,6 +65,7 @@ li {
     padding: 15px;
     cursor: pointer;
 }
+
 
 .flexCol {
     display: flex;

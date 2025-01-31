@@ -1,0 +1,41 @@
+.registerPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(blue, magenta);
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+}
+
+.registerContainer {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 3vh;
+    background: #fbfbfb;
+    width: 35%;
+    height: 70%;
+    padding: 5px;
+    box-shadow: 13px 17px 15px -3px rgba(0,0,0,0.1);
+}
+@media only screen and (max-width: 800px) {
+    .registerContainer {
+        width: 80%;
+    }
+}
+
+@media only screen and (max-height: 800px) {
+    .registerContainer {
+        height: 80%;
+    }
+}
+.registerButton {
+    all: unset;
+    color: white;
+    background: linear-gradient(blue, magenta);
+    width: 60%;
+    padding: 15px;
+    cursor: pointer;
+}

@@ -5,7 +5,9 @@
             "@dto/*": ["src/dto/*"],
             "@controllers/*": ["src/controllers/*"],
             "@mapper/*": ["src/mapper/*"],
-            "@routes/*": ["src/routes/*"]
+            "@routes/*": ["src/routes/*"],
+            "@schemas/*": ["src/schemas/*"],
+            "@models/*": ["src/models/*"],
         }
     }
 }

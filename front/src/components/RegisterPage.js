@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./register.css";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
@@ -8,15 +9,22 @@ import FilledInput from '@mui/material/FilledInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [mail, setMail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [invalid, setInvalid] = useState("hidden");
   const [data, setData] = useState();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const handleMouseDownPassword = (event) => {
@@ -27,27 +35,33 @@ const LoginPage = () => {
     event.preventDefault();
   };
 
-  const sendLoginReq = () => {};
+  const sendRegisterReq = () => {};
   async function getLogin() {
     setInvalid("hidden");
 
     console.log(
       "\nlogin == " +
         login +
+        "\n mail == " +
+        mail +
         "\n password == " +
         password +
+        "\n confirm pwd == " +
+        confirmPassword +
         "\n invalid == " +
-        invalid
+        invalid 
     );
     try {
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch("http://localhost:5000/Register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "cc",
+          username: login,
           password: password,
+          confirmPassword: confirmPassword,
+          mail: mail,
         }),
       });
       await setData(res.json());
@@ -58,16 +72,23 @@ const LoginPage = () => {
     }
   }
   return (
-    <div className="loginPage">
-      <div className="loginContainer">
+    <div className="registerPage">
+      <div className="registerContainer">
         <div className="input-container">
-          <h1>Login</h1>
+          <h1>Register</h1>
           <div className="flexCol flexSpaceBetw gap30 padd5">
             <TextField
               id="filled-basic"
               label="Login"
               value={login}
               onChange={(e) => setLogin(e.target.value)}
+              variant="filled"
+            />
+            <TextField
+              id="filled-basic"
+              label="Mail"
+              value={mail}
+              onChange={(e) => setMail(e.target.value)}
               variant="filled"
             />
             <FormControl variant="filled">
@@ -90,21 +111,45 @@ const LoginPage = () => {
                 </IconButton>
               </InputAdornment>
             }
-            value={login}
-            onChange={(e) => setLogin(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </FormControl>
+        <FormControl variant="filled">
+          <InputLabel htmlFor="filled-adornment-password">Confirm password</InputLabel>
+          <FilledInput
+            id="filled-adornment-password"
+            type={showConfirmPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={
+                    showConfirmPassword ? 'hide the password' : 'display the password'
+                  }
+                  onClick={handleClickShowConfirmPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  onMouseUp={handleMouseUpPassword}
+                  edge="end"
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </FormControl>
           </div>
-          <p style={{ visibility: invalid }}>Invalid credentials</p>
+          <p style={{ visibility: invalid }}>Something went wrong</p>
           <button className="loginButton" onClick={getLogin}>
-            Login
+            Register
           </button>
           <div>
             <p>
               Forgot <a href="">Password</a> ?
             </p>
             <p>
-              Don't you have an account ? <a href="/Register">Sign up !</a>
+              Already have an account ? <a href="/Login">Log in !</a>
             </p>
           </div>
         </div>
@@ -113,4 +158,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

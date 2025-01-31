@@ -10,6 +10,7 @@ import {
 import ErrorPage from "./routes/ErrorPage"
 import LoginPage from './components/LoginPage';
 import Pokedex from './components/Pokedex';
+import RegisterPage from './components/RegisterPage';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path:"/Login",
     element:<LoginPage/>
+  },
+  {
+    path:"/Register",
+    element:<RegisterPage/>
   },
   {
     path:"/Dex",
