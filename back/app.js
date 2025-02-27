@@ -1,12 +1,13 @@
 import express from "express";
 const app = express();
-import cors from 'cors';
+import cors from "cors";
 import authRoutes from "./src/routes/authRoutes.js";
-
+import mysql from "mysql";
+import pool from "./src/config/db.js";
 const port = 5000;
 
 console.log("Heya");
-//mysql.getConnection();
+
 app.use(cors());
 app.use(express.json());
 
