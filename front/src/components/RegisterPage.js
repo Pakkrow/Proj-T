@@ -35,22 +35,9 @@ const RegisterPage = () => {
     event.preventDefault();
   };
 
-  const sendRegisterReq = () => {};
+  //const sendRegisterReq = () => {};
   async function getLogin() {
     setInvalid("hidden");
-
-    console.log(
-      "\nlogin == " +
-        login +
-        "\n mail == " +
-        mail +
-        "\n password == " +
-        password +
-        "\n confirm pwd == " +
-        confirmPassword +
-        "\n invalid == " +
-        invalid 
-    );
     try {
       const res = await fetch("http://localhost:5000/Register", {
         method: "POST",
@@ -70,7 +57,9 @@ const RegisterPage = () => {
     } catch (error) {
       console.log("Erreur == " + error);
     }
+    console.log("success");
   }
+  
   return (
     <div className="registerPage">
       <div className="registerContainer">
@@ -146,7 +135,7 @@ const RegisterPage = () => {
           </button>
           <div>
             <p>
-              Forgot <a href="">Password</a> ?
+              Forgot <a href="/login">Password</a> ?
             </p>
             <p>
               Already have an account ? <a href="/Login">Log in !</a>

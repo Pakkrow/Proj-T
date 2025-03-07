@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 export async function login(req, res) {
     const { login, password } = req.body;
+    console.log("login == " + login);
     if (!login || !password) {
         return res.status(400).json({ message: "Nom de compte ou mot de passe manquant." });
     }
@@ -21,18 +22,20 @@ export async function login(req, res) {
             return res.status(400).json({ message: "Mot de passe incorrect" });
         }
 
-        return res.status(200).json({ message: "Connecté" });
+        return res.status(200).json({ message: user.id });
     });
 }
 
 export async function register(req, res) {
-    const { login, password, confirmPassword, mail } = req.body;
-  
-    if (!login || !password || !confirmPassword || !mail) {
+    const { username, password, confirmPassword, mail } = req.body;
+    console.log("hello = " + JSON.stringify(req.body));
+    if (!username || !password || !confirmPassword || !mail) {
+      console.log("hello1");
       return res.status(400).json({ message: "Tous les champs sont requis" });
     }
   
     if (password !== confirmPassword) {
+      console.log("hello2");
       return res.status(400).json({ message: "Les mots de passe ne correspondent pas" });
     }
   
@@ -41,6 +44,7 @@ export async function register(req, res) {
         return res.status(500).json({ message: "Erreur interne", error });
       }
       if (results.length > 0) {
+        console.log("hello3");
         return res.status(400).json({ message: "Email déjà utilisé" });
       }
   
@@ -49,7 +53,7 @@ export async function register(req, res) {
   
         pool.query(
           "INSERT INTO user_info (login, mail, password) VALUES (?, ?, ?)",
-          [login, mail, hashedPassword],
+          [username, mail, hashedPassword],
           (err, result) => {
             if (err) {
               return res.status(500).json({ message: "Erreur lors de l'enregistrement", error: err });

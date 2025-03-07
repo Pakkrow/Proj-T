@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState, React } from 'react';
 import Pokedex from './components/Pokedex.js';
 import PokeCard from './components/PokeCard.js';
-import LoginPage from './components/LoginPage.js'
-
-const isConnectedS = () => Boolean(localStorage.getItem("isConnected")) || 0;
+import LoginPage from './components/LoginPage.js';
 
 function App() {
   const [input, setInput] = useState("");
   const [pokeList, setPokeList] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
+  //const isMyTokenExpired = isExpired(token);
 
   useEffect(() => {
-    setIsConnected(isConnectedS);
-  })
+    const storedConnection = localStorage.getItem("isConnected");
+    setIsConnected(storedConnection === "true");  
+  });
 
   useEffect(() => {
-
+    localStorage.setItem("isConnected", isConnected);
+    console.log("IsConnected == " + localStorage.getItem("isConnected", isConnected))
+  }, [isConnected]);
+  useEffect(() => {
   }, [pokeList]);
 
   const displayMon = () => {
@@ -25,15 +27,22 @@ function App() {
     return <PokeCard key={input} name={input}/>
   }
 
-  return (
-    <div className="App">
-      <LoginPage/>
+  const connectedUserPage = () => {
+    console.log("Hello ????????? " + isConnected);
+    if (isConnected)
+      return (
       <div className="unsetDiv">
         <Pokedex></Pokedex>
         <input value={input} onInput={e => setInput(e.target.value)}/>
         <button onClick={() => displayMon()}>GO</button>
         <ul className='pokeList'>{pokeList}</ul>
-      </div>
+      </div>);
+    return (<LoginPage/>)
+  }
+
+  return (
+    <div className="App">
+      {connectedUserPage()}
     </div>
   );
 } 

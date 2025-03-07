@@ -13,8 +13,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [invalid, setInvalid] = useState("hidden");
-  const [data, setData] = useState();
-
+  
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -27,18 +26,9 @@ const LoginPage = () => {
     event.preventDefault();
   };
 
-  const sendLoginReq = () => {};
-  async function getLogin() {
+ async function getLogin() {
     setInvalid("hidden");
 
-    console.log(
-      "\nlogin == " +
-        login +
-        "\n password == " +
-        password +
-        "\n invalid == " +
-        invalid
-    );
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: "POST",
@@ -46,17 +36,26 @@ const LoginPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "cc",
+          login: login,
           password: password,
         }),
       });
-      await setData(res.json());
-      if (!data || Object.keys(data).length === 0) setInvalid("visible");
-      console.log("Button clicked, data : " + JSON.stringify(data));
-    } catch (error) {
-      console.log("Erreur == " + error);
-    }
+      console.log("heya");
+      const responseData = await res.json();
+
+      if (!responseData || Object.keys(responseData).length === 0) {
+          setInvalid("visible");
+      }
+      console.log("Connecté ! " + JSON.stringify(responseData));
+      localStorage.setItem("isConnected", true);
+      if (localStorage.getItem("isConnected")) {
+        window.location.href = "/Dex";
+        sessionStorage.setItem("user_id", responseData.message);
+      }
+  } catch (error) { 
+      console.log("Error : " + error);
   }
+}
   return (
     <div className="loginPage">
       <div className="loginContainer">
@@ -70,7 +69,7 @@ const LoginPage = () => {
               onChange={(e) => setLogin(e.target.value)}
               variant="filled"
             />
-            <FormControl variant="filled">
+          <FormControl variant="filled">
           <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
           <FilledInput
             id="filled-adornment-password"
@@ -90,8 +89,8 @@ const LoginPage = () => {
                 </IconButton>
               </InputAdornment>
             }
-            value={login}
-            onChange={(e) => setLogin(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </FormControl>
           </div>
@@ -101,7 +100,7 @@ const LoginPage = () => {
           </button>
           <div>
             <p>
-              Forgot <a href="">Password</a> ?
+              Forgot <a href="/">Password</a> ?
             </p>
             <p>
               Don't you have an account ? <a href="/Register">Sign up !</a>

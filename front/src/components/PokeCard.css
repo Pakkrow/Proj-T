@@ -19,6 +19,7 @@
     width: fit-content;
     border: solid 1px #6871f5; 
     border-radius: 10px;
+    box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
 }
 
 .bsList {
