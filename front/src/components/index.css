@@ -115,10 +115,18 @@ li {
     cursor: pointer;
 }
 
+.lvlInput {
+    padding-left: 8px;
+    padding-top: 2px;
+}
 
 .flexCol {
     display: flex;
     flex-direction: column;
+}
+.flexRow {
+    display: flex;
+    flex-direction: row;
 }
 
 .flexSpaceBetw {

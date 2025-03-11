@@ -17,9 +17,12 @@ const SelectedPokeCard = ({ name }) => {
   const [shinyFrontSprite, setShinyFrontSprite] = useState();
   const [isShiny, setIsShiny] = useState(false);
   const [baseStats, setBaseStats] = useState([]);
+  const [stats, setStats] = useState([]);
   const [pokeTypes, setPokeTypes] = useState([]);
   const [typePath, setTypePath] = useState([]);
   const [lvlValue, setLvlValue] = useState(50);
+  const [ivValue, setIvValue] = useState([0, 0, 0, 0, 0, 0]);
+  const [evValue, setEvValue] = useState([0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,36 +34,32 @@ const SelectedPokeCard = ({ name }) => {
   }, [name, lvlValue]);
 
   useEffect(() => {
+    if (baseStats.length > 0) {
+      setStats(baseStats.map((stat, index) => calculateStat(stat, index, lvlValue, ivValue[index], evValue[index])));
+    }
+  }, [baseStats, lvlValue, ivValue, evValue]);
+
+  useEffect(() => {
     if (pokeTypes.length > 0) {
       getTypeUrls();
     }
   }, [pokeTypes]);
 
-  async function getPokeURL(params) {
+  async function getPokeURL(pokeName) {
     try {
-      const res = await fetch(
-        "https://pokeapi.co/api/v2/pokemon/" + params.name.toLowerCase()
-      );
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeName.toLowerCase()}`);
       const data = await res.json();
 
       setPokeName(data.forms[0].name);
       setDefFrontSprite(data.sprites.front_default);
       setShinyFrontSprite(data.sprites.front_shiny);
-
-      if (params.lvl > 0) {
-        setStatsForLvl(params.lvl, data.stats);
-      } else {
-        setBaseStats(data.stats);
-        console.log("Base stats set without level adjustment.");
-      }
+      setBaseStats(data.stats);
       setPokeTypes(data.types);
     } catch (error) {
-      console.log(
-        "Il y a une erreur sur l'obtention de l'url du poke : ",
-        error
-      );
+      console.log("Erreur lors de l'obtention des données Pokémon :", error);
     }
   }
+
 
   const getTypeUrls = () => {
     const newTypePaths = pokeTypes
@@ -71,27 +70,6 @@ const SelectedPokeCard = ({ name }) => {
       .filter((typePath) => typePath !== null);
     setTypePath(newTypePaths);
   };
-
-  function setStatsForLvl(lvl, stats) {
-    const lvldStats = stats.map((stat) => {
-      if (stat && stat.stat && stat.stat.name) {
-        if (stat.stat.name === "hp") {
-          stat.base_stat = Math.round(
-            ((2 * stat.base_stat + 31) * lvl) / 100 + lvl + 10
-          );
-        } else {
-          stat.base_stat = Math.round(
-            ((2 * stat.base_stat + 31) * lvl) / 100 + 5
-          );
-        }
-        return stat;
-      } else {
-        console.error("Stat is missing or malformed:", stat);
-        return stat;
-      }
-    });
-    setBaseStats(lvldStats);
-  }
 
   const displaySecondType = () => {
     if (pokeTypes.length === 2)
@@ -104,24 +82,42 @@ const SelectedPokeCard = ({ name }) => {
       );
   };
   const handleSliderChange = (event, newValue) => {
-    setLvlValue(newValue);
+    setLvlValue((newValue === 0) ? 1 : newValue);
   };
 
   const handleInputChange = (event) => {
-    setLvlValue(event.target.value === "" ? 0 : Number(event.target.value));
+    setLvlValue(event.target.value === "" ? 1 : Number(event.target.value));
   };
 
   const handleBlur = () => {
-    if (lvlValue < 0) {
-      setLvlValue(0);
+    if (lvlValue < 1) {
+      setLvlValue(1);
     } else if (lvlValue > 100) {
       setLvlValue(100);
     }
   };
 
-  const statsMath = () => {
-    
+  function calculateStat(stat, index, lvl, iv, ev) {
+    let value;
+    if (stat.stat.name === "hp") {
+      value = Math.floor(((2 * stat.base_stat + iv + (ev / 4)) * lvl) / 100 + lvl + 10);
+    } else {
+      value = Math.floor(((2 * stat.base_stat + iv + (ev / 4)) * lvl) / 100 + 5);
+    }
+    return { ...stat, base_stat: value };
   }
+
+  const handleIVChange = (index, newValue) => {
+    const newIVs = [...ivValue];
+    newIVs[index] = Math.min(Math.max(newValue, 0), 31);
+    setIvValue(newIVs);
+  };
+
+  const handleEVChange = (index, newValue) => {
+    const newEVs = [...evValue];
+    newEVs[index] = Math.min(Math.max(newValue, 0), 252);
+    setEvValue(newEVs);
+  };
 
   return (
     <div className="selectedPokeCardCont">
@@ -142,32 +138,46 @@ const SelectedPokeCard = ({ name }) => {
           alt="Shiny Toggle"
         />
       </button>
-      <p>Lvl. {lvlValue}</p>
+      <section className="flexRow">
+      <p>Lvl. </p>        
+      <Input
+          value={lvlValue}
+          className="lvlInput"
+          size="small"
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          inputProps={{
+            min: 1,
+            max: 100,
+            type: "number",
+            "aria-labelledby": "input-slider",
+          }}
+        />
+        </section>
       <Box sx={{ width: 250 }}>
           <Slider
             value={lvlValue}
             onChange={handleSliderChange}
             aria-labelledby="input-slider"
           />
-        <Input
-          value={lvlValue}
-          size="small"
-          onChange={handleInputChange}
-          onBlur={handleBlur}
-          inputProps={{
-            step: 10,
-            min: 0,
-            max: 100,
-            type: "number",
-            "aria-labelledby": "input-slider",
-          }}
-        />
       </Box>
       <ul className="bsList">
-        <p>Stats : </p>
-        {baseStats.map((stat, index) => (
+        <p>Stats :</p>
+        {stats.map((stat, index) => (
           <li key={index} className="bs">
             <p>{stat.stat.name.toUpperCase()}</p>
+            <Input
+              type="number"
+              value={ivValue[index]}
+              onChange={(e) => handleIVChange(index, Number(e.target.value))}
+              inputProps={{ min: 0, max: 31 }}
+            />
+            <Input
+              type="number"
+              value={evValue[index]}
+              onChange={(e) => handleEVChange(index, Number(e.target.value))}
+              inputProps={{ min: 0, max: 252 }}
+            />
             <p>{stat.base_stat}</p>
           </li>
         ))}
