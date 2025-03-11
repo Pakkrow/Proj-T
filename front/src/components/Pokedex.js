@@ -6,9 +6,13 @@ const Pokedex = () => {
   const [pokeList, setPokeList] = useState([]);
   const [pokeGroup, setPokeGroup] = useState([]);
   const [poke, setPoke] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(
+    Number(window.sessionStorage.getItem("selectedPokeIndex")) || -1
+  );
 
   useEffect(() => {
     getMyPoke();
+    window.sessionStorage.setItem("selectedPokeIndex", -1);
     console.log("Connected : " + localStorage.getItem("isConnected"));
   }, []);
 
@@ -90,15 +94,40 @@ const Pokedex = () => {
     }
   }
 
+  const handleSelect = (index) => {
+    if (selectedIndex === index) {
+      setSelectedIndex(-1);
+      window.sessionStorage.setItem("selectedPokeIndex", -1);
+    } else {
+      setSelectedIndex(index);
+      window.sessionStorage.setItem("selectedPokeIndex", index);
+    }
+  };
+
   return (
     <div>
-      <div className="flexCol">
-        <h1>Pokemons :</h1>
+      <div
+        className="DexBGImage"
+        style={{ left: 0, right: 0, zIndex: 1 }}
+      ></div>
+      <div className="flexCol DexContainer">
+        <h1>Mes Pokémon :</h1>
         <button onClick={fetchHourlyPoke}>Get my pokémon</button>
-        <ul className="pokeList">
-          {pokeList.map((pokemon, index) => (
-            <PokeCard key={index} name={pokemon.name} lvl={0} />
-          ))}
+        <ul className="monCont">
+          <section className="fakeSelectedPoke"></section>
+          <section className="selectedPoke">No pokemon selected</section>
+          <ul className="pokeList">
+            {pokeList.map((pokemon, index) => (
+              <PokeCard
+                key={index}
+                name={pokemon.name}
+                lvl={0}
+                index={index}
+                isSelected={selectedIndex === index}
+                onSelect={handleSelect}
+              />
+            ))}
+          </ul>
         </ul>
       </div>
     </div>

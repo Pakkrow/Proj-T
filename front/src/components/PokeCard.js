@@ -3,7 +3,7 @@ import shinyLogo from "../assets/shiny_logo.png";
 import "./PokeCard.css";
 import types from "./types";
 
-const PokeCard = ({ name, lvl = 0 }) => {
+const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect }) => {
   const [pokeName, setPokeName] = useState();
   const [defFrontSprite, setDefFrontSprite] = useState();
   const [shinyFrontSprite, setShinyFrontSprite] = useState();
@@ -42,7 +42,6 @@ const PokeCard = ({ name, lvl = 0 }) => {
         setStatsForLvl(params.lvl, data.stats);
       } else {
         setBaseStats(data.stats);
-        console.log("Data == ", JSON.stringify(data));
         console.log("Base stats set without level adjustment.");
       }
       setPokeTypes(data.types);
@@ -101,7 +100,10 @@ const PokeCard = ({ name, lvl = 0 }) => {
   };
 
   return (
-    <div className="pokeCard">
+    <div
+      className={isSelected ? "selectedPokeCard" : "pokeCard"}
+      onClick={() => onSelect(index)}
+    >
       <p style={{ textTransform: "capitalize", textOverflow: "ellipsis" }}>
         {pokeName ? pokeName : "Not yet"}
       </p>
@@ -112,22 +114,19 @@ const PokeCard = ({ name, lvl = 0 }) => {
       />
       <img className="types" src={typePath[0]} alt="Type 1" />
       {displaySecondType()}
-      <button onClick={() => setIsShiny(!isShiny)} style={{ all: "unset" }}>
+      <button
+        onClick={(event) => {
+          event.stopPropagation();
+          setIsShiny(!isShiny);
+        }}
+        style={{ all: "unset" }}
+      >
         <img
           className={isShiny ? "shinyLogoON" : "shinyLogoOFF"}
           src={shinyLogo}
           alt="Shiny Toggle"
         />
       </button>
-      {displayLvl()}
-      <ul className="bsList">
-        {baseStats.map((stat, index) => (
-          <li key={index} className="bs">
-            <p>{stat.stat.name.toUpperCase()}</p>
-            <p>{stat.base_stat}</p>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
