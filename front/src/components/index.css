@@ -138,3 +138,7 @@ li {
 .padd5 {
   padding: 5px;
 }
+
+h2::first-letter {
+    text-transform: capitalize;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect, React } from "react";
 import "./index.css";
 import PokeCard from "./PokeCard";
+import SelectedPokeCard from "./SelectedPokeCard";
 
 const Pokedex = () => {
   const [pokeList, setPokeList] = useState([]);
@@ -9,6 +10,31 @@ const Pokedex = () => {
   const [selectedIndex, setSelectedIndex] = useState(
     Number(window.sessionStorage.getItem("selectedPokeIndex")) || -1
   );
+  const [selectedPokeData, setSelectedPokeData] = useState(
+    <p>No Pokémon selected, please select a Pokémon to get information.</p>
+  );
+  const [selectedPokeName, setSelectedPokeName] = useState(
+    window.sessionStorage.getItem("selectedPokeName") || null
+  );
+
+  useEffect(() => {
+    async function fetchData() {
+      if (selectedPokeName === "null") {
+        setSelectedPokeData(
+          <p>
+            No Pokémon selected, please select a Pokémon to get information.
+          </p>
+        );
+        return;
+      }
+
+      const pokeInfo = await getPokeByName(selectedPokeName);
+
+      setSelectedPokeData(<SelectedPokeCard name={selectedPokeName} />);
+    }
+
+    fetchData();
+  }, [selectedPokeName]);
 
   useEffect(() => {
     getMyPoke();
@@ -94,28 +120,30 @@ const Pokedex = () => {
     }
   }
 
-  const handleSelect = (index) => {
+  const handleSelect = (index, name) => {
+    console.log("Name == " + name);
     if (selectedIndex === index) {
       setSelectedIndex(-1);
       window.sessionStorage.setItem("selectedPokeIndex", -1);
+      window.sessionStorage.setItem("selectedPokeName", null);
+      setSelectedPokeName("null");
     } else {
       setSelectedIndex(index);
       window.sessionStorage.setItem("selectedPokeIndex", index);
+      window.sessionStorage.setItem("selectedPokeName", name);
+      setSelectedPokeName(name);
     }
   };
 
   return (
     <div>
-      <div
-        className="DexBGImage"
-        style={{ left: 0, right: 0, zIndex: 1 }}
-      ></div>
+      <div className="DexBGImage" style={{ left: 0, right: 0, zIndex: 1 }} />
       <div className="flexCol DexContainer">
         <h1>Mes Pokémon :</h1>
         <button onClick={fetchHourlyPoke}>Get my pokémon</button>
         <ul className="monCont">
           <section className="fakeSelectedPoke"></section>
-          <section className="selectedPoke">No pokemon selected</section>
+          <section className="selectedPoke">{selectedPokeData}</section>
           <ul className="pokeList">
             {pokeList.map((pokemon, index) => (
               <PokeCard
@@ -124,7 +152,7 @@ const Pokedex = () => {
                 lvl={0}
                 index={index}
                 isSelected={selectedIndex === index}
-                onSelect={handleSelect}
+                onSelect={() => handleSelect(index, pokemon.name)}
               />
             ))}
           </ul>
