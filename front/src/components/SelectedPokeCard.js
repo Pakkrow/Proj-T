@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import shinyLogo from "../assets/shiny_logo.png";
 import "./PokeCard.css";
 import types from "./types";
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Slider from '@mui/material/Slider';
-import MuiInput from '@mui/material/Input';
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Slider from "@mui/material/Slider";
+import MuiInput from "@mui/material/Input";
 
-const Input = styled(MuiInput)`width: 42px;`;
+const Input = styled(MuiInput)`
+  width: 42px;
+`;
 
 const SelectedPokeCard = ({ name }) => {
   const [pokeName, setPokeName] = useState();
@@ -31,11 +33,15 @@ const SelectedPokeCard = ({ name }) => {
       }
     };
     fetchData();
-  }, [name, lvlValue]);
+  }, [name]);
 
   useEffect(() => {
     if (baseStats.length > 0) {
-      setStats(baseStats.map((stat, index) => calculateStat(stat, index, lvlValue, ivValue[index], evValue[index])));
+      setStats(
+        baseStats.map((stat, index) =>
+          calculateStat(stat, index, lvlValue, ivValue[index], evValue[index])
+        )
+      );
     }
   }, [baseStats, lvlValue, ivValue, evValue]);
 
@@ -47,7 +53,13 @@ const SelectedPokeCard = ({ name }) => {
 
   async function getPokeURL(pokeName) {
     try {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeName.toLowerCase()}`);
+      const lowerPokeName = JSON.stringify(pokeName.name)
+        .toString()
+        .toLowerCase()
+        .replace(/"/g, "");
+      const res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${lowerPokeName}`
+      );
       const data = await res.json();
 
       setPokeName(data.forms[0].name);
@@ -59,7 +71,6 @@ const SelectedPokeCard = ({ name }) => {
       console.log("Erreur lors de l'obtention des données Pokémon :", error);
     }
   }
-
 
   const getTypeUrls = () => {
     const newTypePaths = pokeTypes
@@ -82,7 +93,7 @@ const SelectedPokeCard = ({ name }) => {
       );
   };
   const handleSliderChange = (event, newValue) => {
-    setLvlValue((newValue === 0) ? 1 : newValue);
+    setLvlValue(newValue === 0 ? 1 : newValue);
   };
 
   const handleInputChange = (event) => {
@@ -100,11 +111,23 @@ const SelectedPokeCard = ({ name }) => {
   function calculateStat(stat, index, lvl, iv, ev) {
     let value;
     if (stat.stat.name === "hp") {
-      value = Math.floor(((2 * stat.base_stat + iv + (ev / 4)) * lvl) / 100 + lvl + 10);
+      value = Math.floor(
+        ((2 * stat.base_stat + iv + ev / 4) * lvl) / 100 + lvl + 10
+      );
     } else {
-      value = Math.floor(((2 * stat.base_stat + iv + (ev / 4)) * lvl) / 100 + 5);
+      value = Math.floor(((2 * stat.base_stat + iv + ev / 4) * lvl) / 100 + 5);
     }
     return { ...stat, base_stat: value };
+  }
+
+  const handleEVExceed = (index, newValue) => {
+    let totalEv = 0;
+    for (let i = 0; i < evValue.length; i++) 
+        totalEv += evValue[i];
+    console.log("totalEv + newValue == " + (totalEv + newValue));
+    if ((totalEv + newValue) > 510)
+        return false
+    return true
   }
 
   const handleIVChange = (index, newValue) => {
@@ -113,9 +136,52 @@ const SelectedPokeCard = ({ name }) => {
     setIvValue(newIVs);
   };
 
+  const handleIVMax = (index) => {
+    const newIVs = [...ivValue];
+    newIVs[index] = Math.min(Math.max(31, 0), 31);
+    setIvValue(newIVs);
+    console.log("IvValue == " + JSON.stringify(ivValue));
+  };
+
+  const handleIVMin = (index) => {
+    const newIVs = [...ivValue];
+    newIVs[index] = Math.min(Math.max(0, 0), 31);
+    setIvValue(newIVs);
+  };
+
+  const handleAllIVMax = () => {
+    const newIVs = [...ivValue];
+    for (let i = 0; i < newIVs.length; i++)
+        newIVs[i] = Math.min(Math.max(31, 0), 31);
+    setIvValue(newIVs);
+  };
+
   const handleEVChange = (index, newValue) => {
     const newEVs = [...evValue];
-    newEVs[index] = Math.min(Math.max(newValue, 0), 252);
+    if (handleEVExceed(index, newValue)) {
+        newEVs[index] = Math.min(Math.max(newValue, 0), 252);
+        setEvValue(newEVs);
+    }
+  };
+
+  const handleEVMax = (index) => {
+    const newEVs = [...evValue];
+    if (handleEVExceed(index, 252)) {
+        newEVs[index] = Math.min(Math.max(252, 0), 252);
+        setEvValue(newEVs);
+    }
+  };
+
+  const handleEVMin = (index) => {
+    const newEVs = [...evValue];
+    newEVs[index] = Math.min(Math.max(0, 0), 252);
+    setEvValue(newEVs);
+  };
+
+  const handleAllEVMin = () => {
+    const newEVs = [...evValue];
+    for (let i = 0; i < newEVs.length; i++)
+        newEVs[i] = Math.min(Math.max(0, 0), 252);
     setEvValue(newEVs);
   };
 
@@ -124,13 +190,17 @@ const SelectedPokeCard = ({ name }) => {
       <p style={{ textTransform: "capitalize", textOverflow: "ellipsis" }}>
         {pokeName ? pokeName : "Not yet"}
       </p>
-      <img
-        className="mons"
-        src={isShiny ? shinyFrontSprite : defFrontSprite}
-        alt="Pokemon"
-      />
-      <img className="types" src={typePath[0]} alt="Type 1" />
-      {displaySecondType()}
+      <section className="flexRow">
+        <img
+          className="mons"
+          src={isShiny ? shinyFrontSprite : defFrontSprite}
+          alt="Pokemon"
+        />
+        <section className="flexCol">
+          <img className="types" src={typePath[0]} alt="Type 1" />
+          {displaySecondType()}
+        </section>
+      </section>
       <button onClick={() => setIsShiny(!isShiny)} style={{ all: "unset" }}>
         <img
           className={isShiny ? "shinyLogoON" : "shinyLogoOFF"}
@@ -139,8 +209,8 @@ const SelectedPokeCard = ({ name }) => {
         />
       </button>
       <section className="flexRow">
-      <p>Lvl. </p>        
-      <Input
+        <p>Lvl. </p>
+        <Input
           value={lvlValue}
           className="lvlInput"
           size="small"
@@ -153,35 +223,90 @@ const SelectedPokeCard = ({ name }) => {
             "aria-labelledby": "input-slider",
           }}
         />
-        </section>
+      </section>
       <Box sx={{ width: 250 }}>
-          <Slider
-            value={lvlValue}
-            onChange={handleSliderChange}
-            aria-labelledby="input-slider"
-          />
+        <Slider
+          value={lvlValue}
+          onChange={handleSliderChange}
+          aria-labelledby="input-slider"
+        />
       </Box>
-      <ul className="bsList">
-        <p>Stats :</p>
-        {stats.map((stat, index) => (
-          <li key={index} className="bs">
-            <p>{stat.stat.name.toUpperCase()}</p>
+      <div className="statContainer">
+        <div className="statCol">
+          <p className="statColTitle">STAT</p>
+          {stats.map((stat, index) => (
+            <p key={index}>{stat.stat.name.toUpperCase()}</p>
+          ))}
+        </div>
+
+        <div className="statCol">
+          <p className="statColTitle">IV</p>
+          {stats.map((_, index) => (
             <Input
-              type="number"
+              key={index}
               value={ivValue[index]}
-              onChange={(e) => handleIVChange(index, Number(e.target.value))}
-              inputProps={{ min: 0, max: 31 }}
+              className="lvlInput"
+              size="small"
+              onChange={(e) => handleIVChange(index, e.target.value)}
+              inputProps={{ min: 0, max: 31, type: "number" }}
             />
+          ))}
+        </div>
+
+        <div className="statCol">
+          <p className="statColTitle">Controls</p>
+          {stats.map((_, index) => (
+            <   div key={index} className="buttonStack">
+              <button className="minmaxButt" onClick={() => handleIVMax(index)}>
+                MAX
+              </button>
+              <button className="minmaxButt" onClick={() => handleIVMin(index)}>
+                MIN
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="statCol">
+          <p className="statColTitle">EV</p>
+          {stats.map((_, index) => (
             <Input
-              type="number"
+              key={index}
               value={evValue[index]}
-              onChange={(e) => handleEVChange(index, Number(e.target.value))}
-              inputProps={{ min: 0, max: 252 }}
+              className="lvlInput"
+              size="small"
+              onChange={(e) => handleEVChange(index, e.target.value)}
+              inputProps={{ min: 0, max: 255, type: "number" }}
             />
-            <p>{stat.base_stat}</p>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+
+        <div className="statCol">
+          <p className="statColTitle">Controls</p>
+          {stats.map((_, index) => (
+            <div key={index} className="buttonStack">
+              <button className="minmaxButt" onClick={() => handleEVMax(index)}>
+                MAX
+              </button>
+              <button className="minmaxButt" onClick={() => handleEVMin(index)}>
+                MIN
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="statCol">
+          <p className="statColTitle">TOTAL</p>
+          {stats.map((stat, index) => (
+            <p key={index}>{stat.base_stat}</p>
+          ))}
+        </div>
+        <p></p>
+        <p></p>
+        <button className="maxAllButt" onClick={() => handleAllIVMax()}>Max All IVs</button>
+        <p></p>
+        <button className="maxAllButt" onClick={() => handleAllEVMin()}>Delete All EVs</button>
+      </div>
       <ul className="bsList">
         <p>Base stats : </p>
         {baseStats.map((stat, index) => (
