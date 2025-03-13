@@ -25,6 +25,8 @@ const SelectedPokeCard = ({ name }) => {
   const [lvlValue, setLvlValue] = useState(50);
   const [ivValue, setIvValue] = useState([0, 0, 0, 0, 0, 0]);
   const [evValue, setEvValue] = useState([0, 0, 0, 0, 0, 0]);
+  const [statUp, setStatUp] = useState("none");
+  const [statDown, setStatDown] = useState("none");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +45,7 @@ const SelectedPokeCard = ({ name }) => {
         )
       );
     }
-  }, [baseStats, lvlValue, ivValue, evValue]);
+  }, [baseStats, lvlValue, ivValue, evValue, statUp, statDown]);
 
   useEffect(() => {
     if (pokeTypes.length > 0) {
@@ -115,20 +117,29 @@ const SelectedPokeCard = ({ name }) => {
         ((2 * stat.base_stat + iv + ev / 4) * lvl) / 100 + lvl + 10
       );
     } else {
-      value = Math.floor(((2 * stat.base_stat + iv + ev / 4) * lvl) / 100 + 5);
+      value = Math.floor(
+        (((2 * stat.base_stat + iv + ev / 4) * lvl) / 100 + 5) *
+          addNature(stat.stat.name)
+      );
     }
     return { ...stat, base_stat: value };
   }
 
+  const addNature = (statName) => {
+    if (statUp === statDown)
+        return 1;
+    if (statName == statUp) return 1.1;
+    if (statName === statDown) return 0.9;
+    return 1;
+  };
+
   const handleEVExceed = (index, newValue) => {
     let totalEv = 0;
-    for (let i = 0; i < evValue.length; i++) 
-        totalEv += evValue[i];
+    for (let i = 0; i < evValue.length; i++) totalEv += evValue[i];
     console.log("totalEv + newValue == " + (totalEv + newValue));
-    if ((totalEv + newValue) > 510)
-        return false
-    return true
-  }
+    if (totalEv + newValue > 510) return false;
+    return true;
+  };
 
   const handleIVChange = (index, newValue) => {
     const newIVs = [...ivValue];
@@ -152,23 +163,23 @@ const SelectedPokeCard = ({ name }) => {
   const handleAllIVMax = () => {
     const newIVs = [...ivValue];
     for (let i = 0; i < newIVs.length; i++)
-        newIVs[i] = Math.min(Math.max(31, 0), 31);
+      newIVs[i] = Math.min(Math.max(31, 0), 31);
     setIvValue(newIVs);
   };
 
   const handleEVChange = (index, newValue) => {
     const newEVs = [...evValue];
     if (handleEVExceed(index, newValue)) {
-        newEVs[index] = Math.min(Math.max(newValue, 0), 252);
-        setEvValue(newEVs);
+      newEVs[index] = Math.min(Math.max(newValue, 0), 252);
+      setEvValue(newEVs);
     }
   };
 
   const handleEVMax = (index) => {
     const newEVs = [...evValue];
     if (handleEVExceed(index, 252)) {
-        newEVs[index] = Math.min(Math.max(252, 0), 252);
-        setEvValue(newEVs);
+      newEVs[index] = Math.min(Math.max(252, 0), 252);
+      setEvValue(newEVs);
     }
   };
 
@@ -181,8 +192,16 @@ const SelectedPokeCard = ({ name }) => {
   const handleAllEVMin = () => {
     const newEVs = [...evValue];
     for (let i = 0; i < newEVs.length; i++)
-        newEVs[i] = Math.min(Math.max(0, 0), 252);
+      newEVs[i] = Math.min(Math.max(0, 0), 252);
     setEvValue(newEVs);
+  };
+
+  const handleNatureUp = (index) => {
+    stats.map((stat, i) => (i == index ? setStatUp(stat.stat.name) : 0));
+  };
+
+  const handleNatureDown = (index) => {
+    stats.map((stat, i) => (i == index ? setStatDown(stat.stat.name) : 0));
   };
 
   return (
@@ -235,10 +254,33 @@ const SelectedPokeCard = ({ name }) => {
         <div className="statCol">
           <p className="statColTitle">STAT</p>
           {stats.map((stat, index) => (
-            <p key={index}>{stat.stat.name.toUpperCase()}</p>
+            console.log("Stat.name == " + JSON.stringify(stat.stat.name)),
+            <section
+              className="flexRow flexSpaceBetw width100"
+              style={index === 0 ? { justifyContent: "center" } : {}}
+            >
+              <button
+                onClick={() => handleNatureUp(index)}
+                className={
+                  index != 0 ? ((stat.stat.name === statUp) ? "selectedNatureUpButt" : "natureButt naturePlusButt") : "noDisplay"
+                }
+              >
+                +
+              </button>
+              <p key={index} className={index != 0 ? "" : ""}>
+                {stat.stat.name.toUpperCase()}
+              </p>
+              <button
+                onClick={() => handleNatureDown(index)}
+                className={
+                    index != 0 ? ((stat.stat.name === statDown) ? "selectedNatureDownButt" : "natureButt natureDownButt") : "noDisplay"
+                  }
+              >
+                -
+              </button>
+            </section>
           ))}
         </div>
-
         <div className="statCol">
           <p className="statColTitle">IV</p>
           {stats.map((_, index) => (
@@ -252,11 +294,10 @@ const SelectedPokeCard = ({ name }) => {
             />
           ))}
         </div>
-
         <div className="statCol">
           <p className="statColTitle">Controls</p>
           {stats.map((_, index) => (
-            <   div key={index} className="buttonStack">
+            <div key={index} className="buttonStack">
               <button className="minmaxButt" onClick={() => handleIVMax(index)}>
                 MAX
               </button>
@@ -303,9 +344,13 @@ const SelectedPokeCard = ({ name }) => {
         </div>
         <p></p>
         <p></p>
-        <button className="maxAllButt" onClick={() => handleAllIVMax()}>Max All IVs</button>
+        <button className="maxAllButt" onClick={() => handleAllIVMax()}>
+          Max All IVs
+        </button>
         <p></p>
-        <button className="maxAllButt" onClick={() => handleAllEVMin()}>Delete All EVs</button>
+        <button className="maxAllButt" onClick={() => handleAllEVMin()}>
+          Delete All EVs
+        </button>
       </div>
       <ul className="bsList">
         <p>Base stats : </p>

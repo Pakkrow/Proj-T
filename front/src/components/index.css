@@ -24,7 +24,7 @@ li {
   left: 0;
   right: 0;
   max-height: 100vh;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 .selectedPoke {
@@ -188,8 +188,63 @@ li {
     transition: 0.4s;
 }
 
+.natureButt {
+    all: unset;
+    display: block;
+    height: fit-content;
+    align-self: center;
+    border: 1px;
+    border-radius: 50%;
+    min-height: 25px;
+    min-width: 25px;
+    background: white;
+    color: #0878BC;
+    border: 1px solid #0878BC;
+}
+
+.natureButt:hover {
+    background: #0878BC;
+    color: white;
+    border: 1px solid lightblue;
+    transition: 0.4s;
+}
+
+.selectedNatureUpButt {
+    all: unset;
+    display: block;
+    height: fit-content;
+    align-self: center;
+    border: 1px;
+    border-radius: 50%;
+    min-height: 25px;
+    min-width: 25px;
+    background: green;
+    color: white;
+    border: 1px solid lightblue;
+}
+
+.selectedNatureDownButt {
+    all: unset;
+    display: block;
+    height: fit-content;
+    align-self: center;
+    border: 1px;
+    border-radius: 50%;
+    min-height: 25px;
+    min-width: 25px;
+    background: red;
+    color: white;
+    border: 1px solid lightblue;
+}
+
+
+
 .lvlInput {
   padding-top: 2px;
+}
+
+.noDisplay {
+    display: none;
 }
 
 .flexCol {
@@ -221,6 +276,14 @@ li {
 
 .width60 {
     width: 60%;
+}
+
+.width100 {
+    width: 100%;
+}
+
+.height100 {
+    height: fit-content;
 }
 
 h2::first-letter {
