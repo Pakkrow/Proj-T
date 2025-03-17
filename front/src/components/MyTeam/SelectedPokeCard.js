@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import shinyLogo from "../assets/shiny_logo.png";
+import shinyLogo from "../../assets/shiny_logo.png";
 import "./PokeCard.css";
-import types from "./types";
+import types from "../types";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import MuiInput from "@mui/material/Input";
 
@@ -257,7 +255,7 @@ const SelectedPokeCard = ({ name }) => {
             console.log("Stat.name == " + JSON.stringify(stat.stat.name)),
             <section
               className="flexRow flexSpaceBetw width100"
-              style={index === 0 ? { justifyContent: "center" } : {}}
+              style={index === 0 ? { justifyContent: "center"} : { height: "25px"}}
             >
               <button
                 onClick={() => handleNatureUp(index)}

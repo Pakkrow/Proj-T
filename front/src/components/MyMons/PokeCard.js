@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import shinyLogo from "../assets/shiny_logo.png";
+import shinyLogo from "../../assets/shiny_logo.png";
 import "./PokeCard.css";
-import types from "./types";
+import types from "../types";
 
-const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect }) => {
+const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect, is_shiny }) => {
   const [pokeName, setPokeName] = useState();
   const [defFrontSprite, setDefFrontSprite] = useState();
   const [shinyFrontSprite, setShinyFrontSprite] = useState();
-  const [isShiny, setIsShiny] = useState(false);
+  const [isShiny, setIsShiny] = useState(is_shiny);
   const [baseStats, setBaseStats] = useState([]);
   const [pokeTypes, setPokeTypes] = useState([]);
   const [typePath, setTypePath] = useState([]);
@@ -42,7 +42,6 @@ const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect }) => {
         setStatsForLvl(params.lvl, data.stats);
       } else {
         setBaseStats(data.stats);
-        console.log("Base stats set without level adjustment.");
       }
       setPokeTypes(data.types);
     } catch (error) {
@@ -95,10 +94,6 @@ const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect }) => {
       );
   };
 
-  const displayLvl = () => {
-    if (lvl > 0) return <p>Lvl. {lvl}</p>;
-  };
-
   return (
     <div
       className={isSelected ? "selectedPokeCard" : "pokeCard"}
@@ -114,19 +109,11 @@ const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect }) => {
       />
       <img className="types" src={typePath[0]} alt="Type 1" />
       {displaySecondType()}
-      <button
-        onClick={(event) => {
-          event.stopPropagation();
-          setIsShiny(!isShiny);
-        }}
-        style={{ all: "unset" }}
-      >
         <img
           className={isShiny ? "shinyLogoON" : "shinyLogoOFF"}
           src={shinyLogo}
           alt="Shiny Toggle"
         />
-      </button>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect, useState, React } from 'react';
-import Pokedex from './components/Pokedex.js';
-import PokeCard from './components/PokeCard.js';
+import Pokedex from './components/MyMons/Pokedex.js';
+import PokeCard from './components/MyMons/PokeCard.js';
 import LoginPage from './components/LoginPage.js';
 
 function App() {

@@ -1,12 +1,14 @@
 import { useState, useEffect, React } from "react";
-import "./index.css";
+import "../index.css";
 import PokeCard from "./PokeCard";
 import SelectedPokeCard from "./SelectedPokeCard";
 
 const Pokedex = () => {
   const [pokeList, setPokeList] = useState([]);
+  const [shinyList, setshinyList] = useState([]);
   const [pokeGroup, setPokeGroup] = useState([]);
   const [poke, setPoke] = useState([]);
+  const [rand, setRand] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(
     Number(window.sessionStorage.getItem("selectedPokeIndex")) || -1
   );
@@ -29,8 +31,7 @@ const Pokedex = () => {
       }
 
       const pokeInfo = await getPokeByName(selectedPokeName);
-
-      setSelectedPokeData(<SelectedPokeCard name={selectedPokeName} />);
+      setSelectedPokeData(<SelectedPokeCard name={selectedPokeName} is_shiny={(shinyList[Number(window.sessionStorage.getItem("selectedPokeIndex"))] === 1) ? true : false} />);
     }
 
     fetchData();
@@ -58,9 +59,11 @@ const Pokedex = () => {
 
       setPoke(newPoke);
       setPokeList((prevList) => [...prevList, newPoke]);
-
+      console.log("newpoke == " + JSON.stringify(pokeList[4]));
+      setRand(randomNumberInRange(70, 79));
+      setshinyList((prevList) => [...prevList, (rand === 77) ? 1 : 0]);      
       try {
-        await registerPoke(newPoke.name);
+        await registerPoke(newPoke.name, rand);
       } catch (error) {
         console.log("Erreur lors de l'enregistrement du Pokémon :", error);
       }
@@ -85,8 +88,12 @@ const Pokedex = () => {
       const pokePromises = data.data.map((poke) =>
         getPokeByName(poke.pokemon_name.replace(/"/g, ""))
       );
+      const shinyPromises = data.data.map((poke) =>
+        poke.is_shiny
+      );
       const pokeData = await Promise.all(pokePromises);
       setPokeList(pokeData);
+      setshinyList(shinyPromises)
     } catch (error) {
       console.log("Failed to get my mons : " + error.message);
     }
@@ -103,7 +110,7 @@ const Pokedex = () => {
     }
   }
 
-  async function registerPoke(poke) {
+  async function registerPoke(poke, is_shiny) {
     try {
       const res = await fetch("http://localhost:5000/registerPoke", {
         method: "POST",
@@ -112,6 +119,7 @@ const Pokedex = () => {
         },
         body: JSON.stringify({
           pokemon: poke,
+          is_shiny: rand,
           user_id: sessionStorage.getItem("user_id"),
         }),
       });
@@ -121,7 +129,6 @@ const Pokedex = () => {
   }
 
   const handleSelect = (index, name) => {
-    console.log("Name == " + name);
     if (selectedIndex === index) {
       setSelectedIndex(-1);
       window.sessionStorage.setItem("selectedPokeIndex", -1);
@@ -153,6 +160,7 @@ const Pokedex = () => {
                 index={index}
                 isSelected={selectedIndex === index}
                 onSelect={() => handleSelect(index, pokemon.name)}
+                is_shiny={(shinyList[index] === 1) ? true : false}
               />
             ))}
           </ul>

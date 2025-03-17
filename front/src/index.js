@@ -9,8 +9,9 @@ import {
 } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage"
 import LoginPage from './components/LoginPage';
-import Pokedex from './components/Pokedex';
+import Pokedex from './components/MyMons/Pokedex';
 import RegisterPage from './components/RegisterPage';
+import Team from './components/MyTeam/Team';
 
 const router = createBrowserRouter([
   {
@@ -27,8 +28,12 @@ const router = createBrowserRouter([
     element:<RegisterPage/>
   },
   {
-    path:"/Dex",
+    path:"/Mymons",
     element: <Pokedex/>
+  },
+  {
+    path:"/Myteam",
+    element: <Team/>
   }
 ]);
 
