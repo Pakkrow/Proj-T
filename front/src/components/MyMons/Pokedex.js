@@ -6,7 +6,9 @@ import SelectedPokeCard from "./SelectedPokeCard";
 const Pokedex = () => {
   const [pokeList, setPokeList] = useState([]);
   const [shinyList, setshinyList] = useState([]);
-  const [pokeGroup, setPokeGroup] = useState([]);
+  const [pokeNameList, setPokeNameList] = useState([]);
+  const [noSortNameList, setNoSortNameList] = useState([]);
+  const [sort, setSort] = useState("none");
   const [poke, setPoke] = useState([]);
   const [rand, setRand] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(
@@ -31,11 +33,28 @@ const Pokedex = () => {
       }
 
       const pokeInfo = await getPokeByName(selectedPokeName);
-      setSelectedPokeData(<SelectedPokeCard name={selectedPokeName} is_shiny={(shinyList[Number(window.sessionStorage.getItem("selectedPokeIndex"))] === 1) ? true : false} />);
+      setSelectedPokeData(
+        <SelectedPokeCard
+          name={selectedPokeName}
+          is_shiny={
+            shinyList[
+              Number(window.sessionStorage.getItem("selectedPokeIndex"))
+            ] === 1
+              ? true
+              : false
+          }
+        />
+      );
     }
 
     fetchData();
   }, [selectedPokeName]);
+
+  useEffect(() => {
+    if (pokeList.length > 0) {
+      setPokeNameList(pokeList.map((poke) => poke.name));
+    }
+  }, [pokeList]);
 
   useEffect(() => {
     getMyPoke();
@@ -51,7 +70,7 @@ const Pokedex = () => {
     try {
       const res = await fetch(
         "https://pokeapi.co/api/v2/pokemon/?offset=" +
-          randomNumberInRange(0, 1282) +
+          randomNumberInRange(0, 1025) +
           "&limit=1"
       );
       const data = await res.json();
@@ -59,11 +78,11 @@ const Pokedex = () => {
 
       setPoke(newPoke);
       setPokeList((prevList) => [...prevList, newPoke]);
-      console.log("newpoke == " + JSON.stringify(pokeList[4]));
+      setNoSortNameList((prevList) => [...prevList, newPoke.name]);
       setRand(randomNumberInRange(70, 79));
-      setshinyList((prevList) => [...prevList, (rand === 77) ? 1 : 0]);      
+      setshinyList((prevList) => [...prevList, rand === 77 ? 1 : 0]);
       try {
-        await registerPoke(newPoke.name, rand);
+        await registerPoke(newPoke.name);
       } catch (error) {
         console.log("Erreur lors de l'enregistrement du Pokémon :", error);
       }
@@ -76,24 +95,22 @@ const Pokedex = () => {
     try {
       const res = await fetch("http://localhost:5000/getMyPoke", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: sessionStorage.getItem("user_id"),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: sessionStorage.getItem("user_id") }),
       });
       const data = await res.json();
       if (!data.data || data.data.length === 0) return;
-      const pokePromises = data.data.map((poke) =>
-        getPokeByName(poke.pokemon_name.replace(/"/g, ""))
+
+      const pokeData = await Promise.all(
+        data.data.map(async (poke) => {
+          const pokeInfo = await getPokeByName(
+            poke.pokemon_name.replace(/"/g, "")
+          );
+          return { ...pokeInfo, isShiny: poke.is_shiny };
+        })
       );
-      const shinyPromises = data.data.map((poke) =>
-        poke.is_shiny
-      );
-      const pokeData = await Promise.all(pokePromises);
+
       setPokeList(pokeData);
-      setshinyList(shinyPromises)
     } catch (error) {
       console.log("Failed to get my mons : " + error.message);
     }
@@ -110,7 +127,7 @@ const Pokedex = () => {
     }
   }
 
-  async function registerPoke(poke, is_shiny) {
+  async function registerPoke(poke) {
     try {
       const res = await fetch("http://localhost:5000/registerPoke", {
         method: "POST",
@@ -142,12 +159,34 @@ const Pokedex = () => {
     }
   };
 
+  const sortAlphabetically = () => {
+    const sortedList = [...pokeList].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+    setPokeList([...sortedList]);
+    setSort("alpha");
+  };
+
+
+  const sortShiniesFirst = () => {
+    const sortedList = [...pokeList].sort((a, b) =>
+      b.isShiny - a.isShiny
+    );
+    setPokeList([...sortedList]);
+    setSort("alpha");
+
+  };
+
   return (
     <div>
       <div className="DexBGImage" style={{ left: 0, right: 0, zIndex: 1 }} />
       <div className="flexCol DexContainer">
         <h1>Mes Pokémon :</h1>
         <button onClick={fetchHourlyPoke}>Get my pokémon</button>
+        <button onClick={() => sortAlphabetically()}>
+          sort alphabetically
+        </button>
+        <button onClick={() => sortShiniesFirst()}>sort shinies first</button>
         <ul className="monCont">
           <section className="fakeSelectedPoke"></section>
           <section className="selectedPoke">{selectedPokeData}</section>
@@ -160,7 +199,7 @@ const Pokedex = () => {
                 index={index}
                 isSelected={selectedIndex === index}
                 onSelect={() => handleSelect(index, pokemon.name)}
-                is_shiny={(shinyList[index] === 1) ? true : false}
+                is_shiny={pokemon.isShiny}
               />
             ))}
           </ul>

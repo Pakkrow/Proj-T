@@ -7,7 +7,6 @@ const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect, is_shiny }) => {
   const [pokeName, setPokeName] = useState();
   const [defFrontSprite, setDefFrontSprite] = useState();
   const [shinyFrontSprite, setShinyFrontSprite] = useState();
-  const [isShiny, setIsShiny] = useState(is_shiny);
   const [baseStats, setBaseStats] = useState([]);
   const [pokeTypes, setPokeTypes] = useState([]);
   const [typePath, setTypePath] = useState([]);
@@ -104,13 +103,13 @@ const PokeCard = ({ name, lvl = 0, index, isSelected, onSelect, is_shiny }) => {
       </p>
       <img
         className="mons"
-        src={isShiny ? shinyFrontSprite : defFrontSprite}
+        src={is_shiny ? shinyFrontSprite : defFrontSprite}
         alt="Pokemon"
       />
       <img className="types" src={typePath[0]} alt="Type 1" />
       {displaySecondType()}
         <img
-          className={isShiny ? "shinyLogoON" : "shinyLogoOFF"}
+          className={is_shiny ? "shinyLogoON" : "shinyLogoOFF"}
           src={shinyLogo}
           alt="Shiny Toggle"
         />
