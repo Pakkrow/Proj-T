@@ -77,10 +77,12 @@ const Pokedex = () => {
       const newPoke = data.results[0];
 
       setPoke(newPoke);
-      setPokeList((prevList) => [...prevList, newPoke]);
+      //setPokeList((prevList) => [...prevList, newPoke]);
       setNoSortNameList((prevList) => [...prevList, newPoke.name]);
       setRand(randomNumberInRange(70, 79));
-      setshinyList((prevList) => [...prevList, rand === 77 ? 1 : 0]);
+      const isShiny = randomNumberInRange(70, 79) === 77 ? 1 : 0;
+
+      setPokeList((prevList) => [...prevList, { ...newPoke, isShiny: isShiny }]);
       try {
         await registerPoke(newPoke.name);
       } catch (error) {
@@ -173,7 +175,8 @@ const Pokedex = () => {
       b.isShiny - a.isShiny
     );
     setPokeList([...sortedList]);
-    setSort("alpha");
+    setSort("shiny");
+    console.log("shinies list : " + pokeList.map((poke) => poke.isShiny))
 
   };
 
