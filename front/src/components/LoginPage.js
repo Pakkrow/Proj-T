@@ -49,7 +49,7 @@ const LoginPage = () => {
       console.log("Connecté ! " + JSON.stringify(responseData));
       localStorage.setItem("isConnected", true);
       if (localStorage.getItem("isConnected")) {
-        window.location.href = "/Dex";
+        window.location.href = "/mymons";
         sessionStorage.setItem("user_id", responseData.message);
       }
   } catch (error) { 
