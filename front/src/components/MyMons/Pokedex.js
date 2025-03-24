@@ -22,7 +22,7 @@ const Pokedex = () => {
 
   useEffect(() => {
     async function fetchData() {
-      if (selectedPokeName === "null") {
+      if (selectedPokeName === null || selectedPokeName === "null" || selectedIndex === -1 || pokeList[0] === undefined) {
         setSelectedPokeData(
           <p>
             No Pokémon selected, please select a Pokémon to get information.
@@ -30,8 +30,7 @@ const Pokedex = () => {
         );
         return;
       }
-
-      const pokeInfo = pokeList[selectedIndex];
+      const pokeInfo = await pokeList[selectedIndex];
       setSelectedPokeData(
         <SelectedPokeCard
           name={selectedPokeName}
@@ -102,7 +101,6 @@ const Pokedex = () => {
       });
       const data = await res.json();
       if (!data.data || data.data.length === 0) return;
-
       const pokeData = await Promise.all(
         data.data.map(async (poke) => {
           const pokeInfo = await getPokeByName(
