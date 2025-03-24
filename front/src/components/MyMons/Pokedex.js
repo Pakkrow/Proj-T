@@ -5,14 +5,11 @@ import SelectedPokeCard from "./SelectedPokeCard";
 
 const Pokedex = () => {
   const [pokeList, setPokeList] = useState([]);
-  const [pokeNameList, setPokeNameList] = useState([]);
   const [noSortNameList, setNoSortNameList] = useState([]);
   const [sort, setSort] = useState("none");
   const [poke, setPoke] = useState([]);
   const [rand, setRand] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(
-    Number(window.sessionStorage.getItem("selectedPokeIndex")) || 0
-  );
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [selectedPokeData, setSelectedPokeData] = useState(
     <p>No Pokémon selected, please select a Pokémon to get information.</p>
   );
@@ -47,14 +44,8 @@ const Pokedex = () => {
   }, [selectedPokeName]);
 
   useEffect(() => {
-    if (pokeList.length > 0) {
-      setPokeNameList(pokeList.map((poke) => poke.name));
-    }
-  }, [pokeList]);
-
-  useEffect(() => {
     getMyPoke();
-    window.sessionStorage.setItem("selectedPokeIndex", -1);
+    setSelectedIndex(-1);
     console.log("Connected : " + localStorage.getItem("isConnected"));
   }, []);
 
@@ -73,7 +64,6 @@ const Pokedex = () => {
       const newPoke = data.results[0];
 
       setPoke(newPoke);
-      //setPokeList((prevList) => [...prevList, newPoke]);
       setNoSortNameList((prevList) => [...prevList, newPoke.name]);
       setRand(randomNumberInRange(70, 79));
       const isShiny = randomNumberInRange(70, 79) === 77 ? 1 : 0;
